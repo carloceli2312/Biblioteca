@@ -1,0 +1,48 @@
+﻿@page "/add-book"
+@using Biblioteca.ViewModels
+@inject BookViewModel BookViewModel
+@using Biblioteca.Models
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create Book</PageTitle>
+
+<h3>Create a New Book</h3>
+
+<EditForm Model="newBook" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <InputText id="title" class="form-control" @bind-Value="newBook.Title" />
+    </div>
+    <div class="mb-3">
+        <label for="author" class="form-label">Author</label>
+        <InputText id="author" class="form-control" @bind-Value="newBook.Author" />
+    </div>
+    <div class="mb-3">
+        <label for="isbn" class="form-label">ISBN</label>
+        <InputText id="isbn" class="form-control" @bind-Value="newBook.ISBN" />
+    </div>
+    <div class="mb-3">
+        <label for="publicationYear" class="form-label">Publication Year</label>
+        <InputNumber id="publicationYear" class="form-control" @bind-Value="newBook.PublicationYear" />
+    </div>
+    <div class="mb-3">
+        <label for="isAvailable" class="form-label">Is Available</label>
+        <InputCheckbox id="isAvailable" class="form-check-input" @bind-Value="newBook.IsAvailable" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+</EditForm>
+
+@code {
+    private Book newBook = new Book();
+
+    private async Task HandleValidSubmit()
+    {
+        await BookViewModel.AddBookAsync(newBook);
+        // Redirect to books page
+        NavigationManager.NavigateTo("/books");
+    }
+}
