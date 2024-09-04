@@ -1,5 +1,6 @@
 using Biblioteca.Components;
 using Biblioteca.Data;
+using Biblioteca.Services;
 using Biblioteca.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Configuration;
@@ -16,6 +17,7 @@ internal class Program
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
         builder.Services.AddScoped<BookViewModel>();
+        builder.Services.AddSingleton<IBookService,BookService>();
 
         // Configure the database.
         builder.Services.AddDbContext<LibraryContext>(options =>

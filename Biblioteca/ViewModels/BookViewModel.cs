@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Biblioteca.Data;
 using Biblioteca.Models;
+using Biblioteca.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Biblioteca.ViewModels
@@ -13,6 +14,13 @@ namespace Biblioteca.ViewModels
         private readonly LibraryContext _context;
         private ObservableCollection<Book> _books;
         private Book _selectedBook;
+        private readonly IBookService _bookService;
+
+        //sostituire operazione nel contesto col servizio
+        public BookViewModel(IBookService bookService)
+        {
+            _bookService = bookService;
+        }
 
         public ObservableCollection<Book> Books
         {
