@@ -11,7 +11,6 @@ namespace Biblioteca.ViewModels
 {
     public class BookViewModel : INotifyPropertyChanged
     {
-        private readonly LibraryContext _context;
         private ObservableCollection<Book> _books;
         private Book _selectedBook;
         private readonly IBookService _bookService;
@@ -42,42 +41,28 @@ namespace Biblioteca.ViewModels
             }
         }
 
-        public BookViewModel(LibraryContext context)
+        public async Task AddBook()
         {
-            _context = context;
-            Books = new ObservableCollection<Book>();
+            _books.Add(_bookService.Create());
         }
 
-        public async Task LoadBooksAsync()
+        public async Task ReadBook(Book book)
         {
-            var books = await _context.Books.ToListAsync();
-            Books = new ObservableCollection<Book>(books);
+            await _bookService.Read(book.id);
         }
 
-        public async Task AddBookAsync(Book book)
+        public async Task DeleteBook(Book book)
         {
-            _context.Books.Add(book);
-            await _context.SaveChangesAsync();
-            await LoadBooksAsync();
+            _books.Remove(book);
+            await _bookService.Delete(book.Id);
         }
 
-        public async Task UpdateBookAsync(Book book)
+        public async Task UpdateBook(Book book)
         {
-            _context.Entry(book).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            await LoadBooksAsync();
+            await _bookService.Update(book);
         }
-
-        public async Task DeleteBookAsync(int id)
-        {
-            var book = await _context.Books.FindAsync(id);
-            if (book != null)
-            {
-                _context.Books.Remove(book);
-                await _context.SaveChangesAsync();
-                await LoadBooksAsync();
-            }
-        }
+    }
+}
 
         public event PropertyChangedEventHandler PropertyChanged;
 
