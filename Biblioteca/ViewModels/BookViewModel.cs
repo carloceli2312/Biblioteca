@@ -4,15 +4,24 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Biblioteca.Data;
 using Biblioteca.Models;
+using Biblioteca.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Biblioteca.ViewModels
 {
+    //sostituire operazione nel contesto col servizio
     public class BookViewModel : INotifyPropertyChanged
     {
         private readonly LibraryContext _context;
         private ObservableCollection<Book> _books;
         private Book _selectedBook;
+
+        private readonly IBookService _bookService;
+
+        public BookViewModel(IBookService bookService)
+        {
+            _bookService = bookService;
+        }
 
         public ObservableCollection<Book> Books
         {
