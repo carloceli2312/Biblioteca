@@ -35,7 +35,9 @@ else
         </tbody>
     </table>
 
-    <button class="btn btn-success" @onclick="AddNewBook">Add New Book</button>
+    <NavLink class="nav-link" href="addBook">
+        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Add New Book
+    </NavLink>
 }
 
 @code {
@@ -43,12 +45,7 @@ else
     {
         await ViewModel.LoadBooksAsync();
     }
-
-    protected void AddNewBook()
-    {
-        ViewModel.NavigateToAddBook();
-    }
-
+    
     private async Task DeleteBook(int id)
     {
         await ViewModel.DeleteBookAsync(id);

@@ -8,7 +8,6 @@ namespace Biblioteca.ViewModels
     public class BookViewModel
     {
         private readonly IBookService _bookService;
-        private readonly NavigationManager _navigationManager;
 
         public ObservableCollection<Book> Books { get; private set; } = new ObservableCollection<Book>();
         public Book? SelectedBook { get; set; }
@@ -16,7 +15,6 @@ namespace Biblioteca.ViewModels
         public BookViewModel(IBookService bookService, NavigationManager navigationManager)
         {
             _bookService = bookService;
-            _navigationManager = navigationManager;
         }
 
         public async Task LoadBooksAsync()
@@ -52,16 +50,6 @@ namespace Biblioteca.ViewModels
                 Books.Remove(bookToRemove);
             }
         }
-
-        public void NavigateToAddBook()
-        {
-            Console.WriteLine("Navigating to add book");
-            _navigationManager.NavigateTo("/addBook", true, true);
-        }
-
-        public void NavigateToEditBook(int id)
-        {
-            _navigationManager.NavigateTo($"/edit-book/{id}");
-        }
+        
     }
 }
