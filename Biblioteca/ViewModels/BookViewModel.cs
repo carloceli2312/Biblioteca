@@ -12,7 +12,7 @@ namespace Biblioteca.ViewModels
         public ObservableCollection<Book> Books { get; private set; } = new ObservableCollection<Book>();
         public Book? SelectedBook { get; set; }
 
-        public BookViewModel(IBookService bookService, NavigationManager navigationManager)
+        public BookViewModel(IBookService bookService)
         {
             _bookService = bookService;
         }
