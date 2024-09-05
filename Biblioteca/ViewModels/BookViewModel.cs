@@ -15,7 +15,6 @@ namespace Biblioteca.ViewModels
         public BookViewModel(IBookService bookService, NavigationManager navigationManager)
         {
             _bookService = bookService;
-            _navigationManager = navigationManager;
         }
 
         public async Task LoadBooksAsync()
