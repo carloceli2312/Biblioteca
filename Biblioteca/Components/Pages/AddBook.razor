@@ -1,0 +1,78 @@
+﻿@page "/addBook"
+@using Biblioteca.Models
+@using Biblioteca.ViewModels
+@inject BookViewModel ViewModel
+@inject NavigationManager NavigationManager
+@inject ILogger<AddBook> Logger
+
+<h3>Add New Book</h3>
+
+<EditForm Model="@newBook" OnValidSubmit="@HandleValidSubmit" FormName="addBookForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="title">Title</label>
+        <InputText id="title" @bind-Value="newBook.Title" @bind-Value:event="oninput" class="form-control" />
+        <ValidationMessage For="@(() => newBook.Title)" />
+    </div>
+
+    <div class="form-group">
+        <label for="author">Author</label>
+        <InputText id="author" @bind-Value="newBook.Author" class="form-control" />
+        <ValidationMessage For="@(() => newBook.Author)" />
+    </div>
+
+    <div class="form-group">
+        <label for="publicationYear">Publication Year</label>
+        <InputNumber id="publicationYear" @bind-Value="newBook.PublicationYear" class="form-control" />
+        <ValidationMessage For="@(() => newBook.PublicationYear)" />
+    </div>
+
+    <div class="form-group">
+        <label for="isAvailable">Is Available</label>
+        <InputCheckbox id="isAvailable" @bind-Value="newBook.IsAvailable" class="form-check-input" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Book</button>
+</EditForm>
+
+<div class="mt-3">
+    <h4>Current Book Values:</h4>
+    <p>Title: @newBook.Title</p>
+    <p>Author: @newBook.Author</p>
+    <p>Publication Year: @newBook.PublicationYear</p>
+    <p>Is Available: @newBook.IsAvailable</p>
+</div>
+
+@code {
+    private Book newBook = new Book();
+
+    protected override void OnInitialized()
+    {
+        newBook = new Book
+            {
+                Title = "Default",
+                Author = "Default",
+                PublicationYear = DateTime.Now.Year,
+                IsAvailable = true
+            };
+        LogBookDetails("OnInitialized");
+    }
+
+    protected async Task HandleValidSubmit()
+    {
+        LogBookDetails("Before submission");
+        await ViewModel.AddBookAsync(newBook);
+        NavigationManager.NavigateTo("/books");
+    }
+
+    private void LogBookDetails(string context)
+    {
+        Logger.LogInformation($"{context} - Book details: " +
+            $"Title='{newBook.Title}', " +
+            $"Author='{newBook.Author}', " +
+            $"PublicationYear={newBook.PublicationYear}, " +
+            $"IsAvailable={newBook.IsAvailable}");
+    }
+}

@@ -1,34 +1,72 @@
 using Biblioteca.Data;
 using Biblioteca.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Biblioteca.Services
 {
     public class BookService : IBookService
     {
         private readonly LibraryContext _context;
+
         public BookService(LibraryContext context)
         {
             _context = context;
         }
 
-        public Book Create()
+        public async Task<Book> CreateAsync(Book book)
         {
-            throw new NotImplementedException();
+            _context.Books.Add(book);
+            await _context.SaveChangesAsync();
+            return book;
         }
 
-        public bool DeleteBook(int id)
+        public async Task<Book> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Books.FindAsync(id);
         }
 
-        public Book Read(int id)
+        public async Task<IEnumerable<Book>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Books.ToListAsync();
         }
 
-        public bool Update(Book book)
+        public async Task<bool> UpdateAsync(Book book)
         {
-            throw new NotImplementedException();
+            _context.Entry(book).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await BookExists(book.Id))
+                {
+                    return false;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var book = await _context.Books.FindAsync(id);
+            if (book == null)
+            {
+                return false;
+            }
+
+            _context.Books.Remove(book);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        private async Task<bool> BookExists(int id)
+        {
+            return await _context.Books.AnyAsync(e => e.Id == id);
         }
     }
 }

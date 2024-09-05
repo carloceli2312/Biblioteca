@@ -1,74 +1,67 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using Biblioteca.Data;
-using Biblioteca.Models;
+﻿using Biblioteca.Models;
 using Biblioteca.Services;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Components;
+using System.Collections.ObjectModel;
 
 namespace Biblioteca.ViewModels
 {
-    public class BookViewModel : INotifyPropertyChanged
+    public class BookViewModel
     {
-        private ObservableCollection<Book> _books;
-        private Book _selectedBook;
         private readonly IBookService _bookService;
+        private readonly NavigationManager _navigationManager;
 
-        //sostituire operazione nel contesto col servizio
-        public BookViewModel(IBookService bookService)
+        public ObservableCollection<Book> Books { get; private set; } = new ObservableCollection<Book>();
+        public Book? SelectedBook { get; set; }
+
+        public BookViewModel(IBookService bookService, NavigationManager navigationManager)
         {
             _bookService = bookService;
+            _navigationManager = navigationManager;
         }
 
-        public ObservableCollection<Book> Books
+        public async Task LoadBooksAsync()
         {
-            get => _books;
-            set
+            var books = await _bookService.GetAllAsync();
+            Books.Clear();
+            foreach (var book in books)
             {
-                _books = value;
-                OnPropertyChanged();
+                Books.Add(book);
             }
         }
 
-        public Book SelectedBook
+        public async Task AddBookAsync(Book book)
         {
-            get => _selectedBook;
-            set
+            await _bookService.CreateAsync(book);
+            Books.Add(book);
+        }
+
+        public async Task UpdateBookAsync(Book book)
+        {
+            if (await _bookService.UpdateAsync(book))
             {
-                _selectedBook = value;
-                OnPropertyChanged();
+                var index = Books.IndexOf(Books.First(b => b.Id == book.Id));
+                Books[index] = book;
             }
         }
 
-        public async Task AddBook()
+        public async Task DeleteBookAsync(int id)
         {
-            _books.Add(_bookService.Create());
+            if (await _bookService.DeleteAsync(id))
+            {
+                var bookToRemove = Books.First(b => b.Id == id);
+                Books.Remove(bookToRemove);
+            }
         }
 
-        public async Task ReadBook(Book book)
+        public void NavigateToAddBook()
         {
-            await _bookService.Read(book.id);
+            Console.WriteLine("Navigating to add book");
+            _navigationManager.NavigateTo("/addBook", true, true);
         }
 
-        public async Task DeleteBook(Book book)
+        public void NavigateToEditBook(int id)
         {
-            _books.Remove(book);
-            await _bookService.Delete(book.Id);
-        }
-
-        public async Task UpdateBook(Book book)
-        {
-            await _bookService.Update(book);
-        }
-    }
-}
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            _navigationManager.NavigateTo($"/edit-book/{id}");
         }
     }
 }

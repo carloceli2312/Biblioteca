@@ -7,17 +7,12 @@ namespace Biblioteca.Models
     public class Book
     {
         public int Id { get; set; }
-        
+
         [Required]
-        [StringLength(100)]
-        public string Title { get; set; }
-        
+        public string Title { get; set; } = "Default";
+
         [Required]
-        [StringLength(50)]
-        public string Author { get; set; }
-        
-        [StringLength(13)]
-        public string ISBN { get; set; }
+        public string Author { get; set; } = "Default";
         
         public int PublicationYear { get; set; }
         
